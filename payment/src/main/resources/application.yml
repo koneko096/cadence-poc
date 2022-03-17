@@ -1,0 +1,13 @@
+security:
+  basic:
+    enabled: false
+management:
+  security:
+    enabled: false
+
+grpc:
+  port: 10885
+
+logging:
+  level:
+    root: INFO

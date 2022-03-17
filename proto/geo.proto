@@ -25,11 +25,3 @@ message TripDetail {
   float length = 2;
   google.protobuf.Duration duration = 3;
 }
-
-service Pricing {
-  rpc BidRate(GeoPoint) returns (Fare) {}
-}
-
-message Fare {
-  int32 value = 1;
-}

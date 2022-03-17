@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "geo.proto";
+
+option go_package = "./grpc";
+
+package grpc;
+
+service Pricing {
+  rpc BidRate(GeoPoint) returns (Fare) {}
+}
+
+message Fare {
+  int32 value = 1;
+}

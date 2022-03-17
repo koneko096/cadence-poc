@@ -1,9 +1,11 @@
-package booking
+package main
 
 import (
+	"cadence-poc/booking"
+	"log"
+
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
-	"log"
 )
 
 func main() {
@@ -17,12 +19,12 @@ func main() {
 	// This worker hosts both Worker and Activity functions
 	w := worker.New(c, "BOOKING_QUEUE", worker.Options{})
 
-	a := &Activities{}
+	a := &booking.Activities{}
 
 	w.RegisterActivity(a.CreateBooking)
 	w.RegisterActivity(a.FinishBooking)
 
-	w.RegisterWorkflow(BookingWorkflow)
+	w.RegisterWorkflow(booking.BookingWorkflow)
 
 	// Start listening to the Task Queue
 	err = w.Run(worker.InterruptCh())

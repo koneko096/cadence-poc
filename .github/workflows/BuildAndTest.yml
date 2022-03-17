@@ -4,7 +4,6 @@ name: Build and test
 on:
   # Triggers the workflow on push and pull request events
   push:
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -31,9 +30,20 @@ jobs:
 
       - name: Generating protos
         run: |
-          protoc --go_out=$GEN_OUT_DIR \
-          --go-grpc_out=$GEN_OUT_DIR \
-          $(find $PROTO_DIR -type f -name '*.proto')
-        env:
-          GEN_OUT_DIR: .
-          PROTO_DIR: proto
+          protoc --go_out=. --go-grpc_out=. \
+          -Iproto/ -Ipayment/src/main/proto/ \
+          proto/*.proto payment/src/main/proto/*.proto
+
+      - name: Build go
+        run: go build ./...
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build payment (Java)
+        run: |
+          cd payment
+          ./mvnw package

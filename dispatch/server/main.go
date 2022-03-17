@@ -1,9 +1,12 @@
-package dispatch
+package main
 
 import (
+	"log"
+
+	"cadence-poc/dispatch"
+
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
-	"log"
 )
 
 func main() {
@@ -17,7 +20,7 @@ func main() {
 	// This worker hosts both Worker and Activity functions
 	w := worker.New(c, "DISPATCH_QUEUE", worker.Options{})
 
-	a := &Activities{}
+	a := &dispatch.Activities{}
 
 	w.RegisterActivity(a.CreateBooking)
 	w.RegisterActivity(a.FinishBooking)

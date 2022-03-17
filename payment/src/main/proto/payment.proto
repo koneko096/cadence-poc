@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./grpc";
+option java_multiple_files = true;
+option java_package = "com.github.koneko096.cadencepoc.payment";
+option java_outer_classname = "Grpc";
+
+service Payment {
+  rpc DeductFare(Billing) returns (Receipt) {}
+}
+
+message Billing {
+  int32 userID = 1;
+  int32 cost = 2;
+}
+
+message Receipt {
+  int32 receiptID = 1;
+}
