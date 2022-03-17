@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "google/protobuf/duration.proto";
+
+option go_package = "./grpc";
+
+package grpc;
+
+service Geo {
+  rpc ComputeRoute(TripRequest) returns (TripDetail) {}
+}
+
+message GeoPoint {
+  float latitude = 1;
+  float longitude = 2;
+}
+
+message TripRequest {
+  GeoPoint start = 1;
+  GeoPoint end = 2;
+}
+
+message TripDetail {
+  TripRequest request = 1;
+  float length = 2;
+  google.protobuf.Duration duration = 3;
+}
+
+service Pricing {
+  rpc BidRate(GeoPoint) returns (Fare) {}
+}
+
+message Fare {
+  int32 value = 1;
+}
