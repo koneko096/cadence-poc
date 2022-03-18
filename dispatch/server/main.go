@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"cadence-poc/dispatch"
+	"log"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
@@ -22,10 +21,10 @@ func main() {
 
 	a := &dispatch.Activities{}
 
-	w.RegisterActivity(a.CreateBooking)
-	w.RegisterActivity(a.FinishBooking)
+	w.RegisterActivity(a.DispatchDriver)
+	w.RegisterActivity(a.FindNearestDriver)
 
-	w.RegisterWorkflow(BookingWorkflow)
+	w.RegisterWorkflow(dispatch.DispatchWorkflow)
 
 	// Start listening to the Task Queue
 	err = w.Run(worker.InterruptCh())
