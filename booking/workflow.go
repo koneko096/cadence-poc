@@ -4,6 +4,7 @@ import (
 	"cadence-poc/grpc"
 	"context"
 	"log"
+	"time"
 
 	"go.temporal.io/sdk/workflow"
 )
@@ -16,18 +17,18 @@ type Activities struct {
 
 type (
 	BookingRequest struct {
-		userID string
-		trip   grpc.TripRequest
+		UserID int32
+		Trip   grpc.TripRequest
 	}
 
 	TripFare struct {
-		distance float32
-		fare     int64
+		Distance float32
+		Fare     int64
 	}
 
 	BookingState struct {
-		request  BookingRequest
-		tripFare TripFare
+		Request  BookingRequest
+		TripFare TripFare
 	}
 
 	BookingStatus struct {
@@ -37,9 +38,13 @@ type (
 
 func BookingWorkflow(ctx workflow.Context, req *BookingRequest) error {
 	var activities *Activities
+	activityoptions := workflow.ActivityOptions{
+		ScheduleToCloseTimeout: 10 * time.Minute,
+	}
+	ctx = workflow.WithActivityOptions(ctx, activityoptions)
 
 	fare := TripFare{}
-	future := workflow.ExecuteActivity(ctx, activities.CalculateFare, &req.trip)
+	future := workflow.ExecuteActivity(ctx, activities.CalculateFare, &req.Trip)
 	if err := future.Get(ctx, &fare); err != nil {
 		log.Printf("Fare calculation failed\n%v", err)
 		return err
@@ -70,7 +75,7 @@ func BookingWorkflow(ctx workflow.Context, req *BookingRequest) error {
 	}
 
 	future = workflow.ExecuteActivity(ctx, activities.FinishBooking, bookingStatus)
-	if err := future.Get(ctx, fare); err != nil {
+	if err := future.Get(ctx, &fare); err != nil {
 		log.Printf("Booking update failed\n%v", err)
 		return err
 	}
@@ -93,8 +98,8 @@ func (s *Activities) CalculateFare(ctx context.Context, req *grpc.TripRequest) (
 
 	distance := tripDetail.Length
 	return TripFare{
-		distance: distance,
-		fare:     int64(rate.Value) * int64(distance+0.5),
+		Distance: distance,
+		Fare:     int64(rate.Value) * int64(distance+0.5),
 	}, nil
 }
 

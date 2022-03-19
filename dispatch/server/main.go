@@ -24,7 +24,7 @@ func main() {
 	w.RegisterActivity(a.DispatchDriver)
 	w.RegisterActivity(a.FindNearestDriver)
 
-	w.RegisterWorkflow(dispatch.DispatchWorkflow)
+	w.RegisterWorkflow(dispatch.DispatchDriverWorkflow)
 
 	// Start listening to the Task Queue
 	err = w.Run(worker.InterruptCh())

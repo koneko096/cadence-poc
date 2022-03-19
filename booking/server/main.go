@@ -3,13 +3,16 @@ package main
 import (
 	"cadence-poc/booking"
 	rpc "cadence-poc/grpc"
+	"context"
 	"log"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"net/http"
 
 	"go.temporal.io/sdk/client"
 )
+
+type Server struct {
+	Client *client.Client
+}
 
 func main() {
 	c, err := client.NewClient(client.Options{})
@@ -18,37 +21,47 @@ func main() {
 	}
 	defer c.Close()
 
-	pc := generateConn("localhost:10886")
-	defer pc.Close()
-	gc := generateConn("localhost:10887")
-	defer gc.Close()
-	yc := generateConn("localhost:10885")
-	defer yc.Close()
-	log.Printf("Connection(s) made")
-
-	a := &booking.Activities{
-		PricingClient: rpc.NewPricingClient(pc),
-		GeoClient:     rpc.NewGeoClient(gc),
-		PaymentClient: rpc.NewPaymentClient(yc),
+	s := Server{&c}
+	httpServer := &http.Server{
+		Addr:    ":8090",
+		Handler: s.handler(),
 	}
+	log.Printf("Listening on localhost:8090")
 
-	w := booking.Worker{
-		Activities: a,
-		Client:     &c,
+	err = httpServer.ListenAndServe()
+	if err != nil {
+		log.Fatalln("unable to start Server", err)
 	}
-	s := booking.Server{
-		Port:   "8090",
-		Client: &c,
-	}
-
-	w.Run()
-	s.Run()
 }
 
-func generateConn(addr string) *grpc.ClientConn {
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalln("Connection failure", err)
+func (s *Server) handler() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/book", s.book)
+	return mux
+}
+
+func (s *Server) book(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		workflowOptions := client.StartWorkflowOptions{
+			TaskQueue: "BOOKING_QUEUE",
+		}
+
+		param := booking.BookingRequest{
+			UserID: 1,
+			Trip: rpc.TripRequest{
+				Start: &rpc.GeoPoint{Latitude: 324, Longitude: 567},
+				End:   &rpc.GeoPoint{Latitude: 324, Longitude: 567},
+			},
+		}
+
+		c := *s.Client
+		_, err := c.ExecuteWorkflow(context.Background(), workflowOptions, booking.BookingWorkflow, &param)
+		if err != nil {
+			log.Printf("Workflow crashed\n%v", err)
+			http.Error(w, "Internal server error.", http.StatusInternalServerError)
+		}
+	default:
+		http.Error(w, "Page not found.", http.StatusNotFound)
 	}
-	return conn
 }

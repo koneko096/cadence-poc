@@ -28,8 +28,12 @@ type (
 	}
 )
 
-func DispatchWorkflow(ctx workflow.Context, start geo.GeoPoint) error {
+func DispatchDriverWorkflow(ctx workflow.Context, start geo.GeoPoint) error {
 	var activities *Activities
+	activityoptions := workflow.ActivityOptions{
+		ScheduleToCloseTimeout: 10 * time.Minute,
+	}
+	ctx = workflow.WithActivityOptions(ctx, activityoptions)
 
 	future := workflow.ExecuteActivity(ctx, activities.FindNearestDriver, start)
 	driver := Driver{}
@@ -45,7 +49,7 @@ func DispatchWorkflow(ctx workflow.Context, start geo.GeoPoint) error {
 		return err
 	}
 
-	if err := workflow.Sleep(ctx, 10*time.Minute); err != nil {
+	if err := workflow.Sleep(ctx, 5*time.Second); err != nil {
 		log.Printf("Error on getting trip\n%v", err)
 		return err
 	}
