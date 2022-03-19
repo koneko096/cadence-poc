@@ -4,8 +4,6 @@ import "geo.proto";
 
 option go_package = "./grpc";
 
-package grpc;
-
 service Pricing {
   rpc BidRate(GeoPoint) returns (Fare) {}
 }

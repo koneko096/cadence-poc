@@ -10,10 +10,10 @@ service Payment {
 }
 
 message Billing {
-  int32 userID = 1;
+  int32 user_id = 1;
   int32 cost = 2;
 }
 
 message Receipt {
-  int32 receiptID = 1;
+  int32 receipt_id = 1;
 }

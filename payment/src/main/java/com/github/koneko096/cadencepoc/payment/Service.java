@@ -8,7 +8,7 @@ public class Service extends PaymentGrpc.PaymentImplBase {
   @Override
   public void deductFare(Billing request, StreamObserver<Receipt> responseObserver) {
     Receipt res = Receipt.newBuilder()
-        .setReceiptID(256)
+        .setReceiptId(256)
         .build();
     responseObserver.onNext(res);
     responseObserver.onCompleted();

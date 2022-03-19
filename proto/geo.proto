@@ -4,8 +4,6 @@ import "google/protobuf/duration.proto";
 
 option go_package = "./grpc";
 
-package grpc;
-
 service Geo {
   rpc ComputeRoute(TripRequest) returns (TripDetail) {}
 }

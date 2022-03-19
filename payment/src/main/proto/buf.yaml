@@ -1,0 +1,12 @@
+version: v1
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - FIELD_LOWER_SNAKE_CASE
+    - MESSAGE_PASCAL_CASE
+    - RPC_PASCAL_CASE
+    - SERVICE_PASCAL_CASE
+    - IMPORT_NO_WEAK
+    - IMPORT_NO_PUBLIC
