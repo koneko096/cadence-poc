@@ -3,6 +3,7 @@ package booking
 import (
 	"cadence-poc/grpc"
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -55,7 +56,8 @@ func BookingWorkflow(ctx workflow.Context, req *BookingRequest) error {
 	}
 
 	childWorkflowOptions := workflow.ChildWorkflowOptions{
-		TaskQueue: "DISPATCH_QUEUE",
+		WorkflowID: fmt.Sprintf("dispatcher-%d", req.UserID),
+		TaskQueue:  "DISPATCH_QUEUE",
 	}
 	var s string
 	ctx = workflow.WithChildOptions(ctx, childWorkflowOptions)

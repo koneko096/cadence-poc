@@ -53,14 +53,11 @@ func DispatchDriverWorkflow(ctx workflow.Context, req *rpc.TripRequest) error {
 		return err
 	}
 
-	if err := workflow.Sleep(ctx, 5*time.Second); err != nil {
-		log.Printf("Error on getting trip\n%v", err)
-		return err
-	}
-
+	var signal string
+	signalChan := workflow.GetSignalChannel(ctx, "DRIVER_ARRIVE")
+	signalChan.Receive(ctx, &signal)
 	future = workflow.ExecuteActivity(ctx, activities.FinishTrip, state.tripID)
-	var s string
-	if err := future.Get(ctx, &s); err != nil {
+	if err := future.Get(ctx, &signal); err != nil {
 		log.Printf("Finish trip failed\n%v", err)
 		return err
 	}
@@ -76,6 +73,6 @@ func (*Activities) DispatchDriver(ctx context.Context, req *DispatchRequest) (*D
 	return &DispatchState{tripID: 44, driverID: req.driverID, tripStart: req.tripStart, startTime: time.Now()}, nil
 }
 
-func (*Activities) FinishTrip(ctx context.Context, tripID string) error {
+func (*Activities) FinishTrip(ctx context.Context, tripID int32) error {
 	return nil
 }
