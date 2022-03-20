@@ -17,8 +17,8 @@ type Activities struct {
 
 type (
 	BookingRequest struct {
-		UserID int32
-		Trip   grpc.TripRequest
+		UserID int32             `json:"userId,omitempty"`
+		Trip   *grpc.TripRequest `json:"trip,omitempty"`
 	}
 
 	TripFare struct {
@@ -27,12 +27,8 @@ type (
 	}
 
 	BookingState struct {
-		Request  BookingRequest
-		TripFare TripFare
-	}
-
-	BookingStatus struct {
-		bookingID string
+		Request  *BookingRequest
+		TripFare *TripFare
 	}
 )
 
@@ -50,10 +46,10 @@ func BookingWorkflow(ctx workflow.Context, req *BookingRequest) error {
 		return err
 	}
 
-	bookingState := BookingState{}
+	bookingState := BookingState{Request: req, TripFare: &fare}
+	var bookingID string
 	future = workflow.ExecuteActivity(ctx, activities.CreateBooking, &bookingState)
-	bookingStatus := BookingStatus{}
-	if err := future.Get(ctx, &bookingStatus); err != nil {
+	if err := future.Get(ctx, &bookingID); err != nil {
 		log.Printf("Booking creation failed\n%v", err)
 		return err
 	}
@@ -61,20 +57,25 @@ func BookingWorkflow(ctx workflow.Context, req *BookingRequest) error {
 	childWorkflowOptions := workflow.ChildWorkflowOptions{
 		TaskQueue: "DISPATCH_QUEUE",
 	}
+	var s string
 	ctx = workflow.WithChildOptions(ctx, childWorkflowOptions)
-	chFuture := workflow.ExecuteChildWorkflow(ctx, "DispatchDriverWorkflow", req)
-	if err := chFuture.Get(ctx, &bookingStatus); err != nil {
+	chFuture := workflow.ExecuteChildWorkflow(ctx, "DispatchDriverWorkflow", &req.Trip)
+	if err := chFuture.Get(ctx, &s); err != nil {
 		log.Printf("Driver dispatch failed\n%v", err)
 		return err
 	}
 
-	future = workflow.ExecuteActivity(ctx, activities.DeductFare, fare)
-	if err := future.Get(ctx, &bookingStatus); err != nil {
+	bill := grpc.Billing{
+		UserId: req.UserID,
+		Cost:   int32(fare.Fare),
+	}
+	future = workflow.ExecuteActivity(ctx, activities.DeductFare, &bill)
+	if err := future.Get(ctx, &s); err != nil {
 		log.Printf("Fare deduction failed\n%v", err)
 		return err
 	}
 
-	future = workflow.ExecuteActivity(ctx, activities.FinishBooking, bookingStatus)
+	future = workflow.ExecuteActivity(ctx, activities.FinishBooking, bookingID)
 	if err := future.Get(ctx, &fare); err != nil {
 		log.Printf("Booking update failed\n%v", err)
 		return err
@@ -103,8 +104,8 @@ func (s *Activities) CalculateFare(ctx context.Context, req *grpc.TripRequest) (
 	}, nil
 }
 
-func (*Activities) CreateBooking(ctx context.Context, booking *BookingState) (BookingStatus, error) {
-	return BookingStatus{"GRABJEK"}, nil
+func (*Activities) CreateBooking(ctx context.Context, booking *BookingState) (string, error) {
+	return "GRABJEK", nil
 }
 
 func (s *Activities) DeductFare(ctx context.Context, bill *grpc.Billing) error {
@@ -117,6 +118,6 @@ func (s *Activities) DeductFare(ctx context.Context, bill *grpc.Billing) error {
 	return nil
 }
 
-func (*Activities) FinishBooking(ctx context.Context, booking *BookingStatus) error {
+func (*Activities) FinishBooking(ctx context.Context, bookingID string) error {
 	return nil
 }

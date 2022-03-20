@@ -2,8 +2,8 @@ package main
 
 import (
 	"cadence-poc/booking"
-	rpc "cadence-poc/grpc"
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -47,16 +47,15 @@ func (s *Server) book(w http.ResponseWriter, r *http.Request) {
 			TaskQueue: "BOOKING_QUEUE",
 		}
 
-		param := booking.BookingRequest{
-			UserID: 1,
-			Trip: rpc.TripRequest{
-				Start: &rpc.GeoPoint{Latitude: 324, Longitude: 567},
-				End:   &rpc.GeoPoint{Latitude: 324, Longitude: 567},
-			},
+		var param booking.BookingRequest
+		err := json.NewDecoder(r.Body).Decode(&param)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		c := *s.Client
-		_, err := c.ExecuteWorkflow(context.Background(), workflowOptions, booking.BookingWorkflow, &param)
+		_, err = c.ExecuteWorkflow(context.Background(), workflowOptions, booking.BookingWorkflow, &param)
 		if err != nil {
 			log.Printf("Workflow crashed\n%v", err)
 			http.Error(w, "Internal server error.", http.StatusInternalServerError)
