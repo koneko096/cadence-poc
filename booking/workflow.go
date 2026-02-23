@@ -1,13 +1,14 @@
 package booking
 
 import (
-	"cadence-poc/grpc"
 	"context"
 	"fmt"
 	"log"
 	"time"
 
 	"go.temporal.io/sdk/workflow"
+
+	"cadence-poc/grpc"
 )
 
 type Activities struct {
@@ -23,7 +24,7 @@ type (
 	}
 
 	TripFare struct {
-		Distance float32
+		Distance float64
 		Fare     int64
 	}
 
@@ -93,7 +94,7 @@ func (s *Activities) CalculateFare(ctx context.Context, req *grpc.TripRequest) (
 		return TripFare{}, err
 	}
 
-	rate, err := s.PricingClient.BidRate(ctx, req.Start)
+	rate, err := s.PricingClient.BidRate(ctx, req)
 	if err != nil {
 		log.Printf("Cannot compute fare rate in the region\n%v", err)
 		return TripFare{}, err

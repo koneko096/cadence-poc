@@ -1,15 +1,15 @@
 package main
 
 import (
-	"cadence-poc/booking"
-	rpc "cadence-poc/grpc"
 	"log"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	"cadence-poc/booking"
+	rpc "cadence-poc/grpc"
 )
 
 func main() {

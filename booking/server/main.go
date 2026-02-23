@@ -1,13 +1,14 @@
 package main
 
 import (
-	"cadence-poc/booking"
 	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 
 	"go.temporal.io/sdk/client"
+
+	"cadence-poc/booking"
 )
 
 type Server struct {

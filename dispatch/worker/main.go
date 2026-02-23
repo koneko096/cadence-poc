@@ -1,11 +1,12 @@
 package main
 
 import (
-	"cadence-poc/dispatch"
 	"log"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+
+	"cadence-poc/dispatch"
 )
 
 func main() {

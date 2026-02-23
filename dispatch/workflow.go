@@ -1,12 +1,13 @@
 package dispatch
 
 import (
-	rpc "cadence-poc/grpc"
 	"context"
 	"log"
 	"time"
 
 	"go.temporal.io/sdk/workflow"
+
+	rpc "cadence-poc/grpc"
 )
 
 type Activities struct{}

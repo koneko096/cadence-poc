@@ -20,6 +20,6 @@ message TripRequest {
 
 message TripDetail {
   TripRequest request = 1;
-  float length = 2;
-  google.protobuf.Duration duration = 3;
+  double length = 2;
+  string duration = 3;
 }
