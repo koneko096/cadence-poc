@@ -45,8 +45,7 @@ jobs:
         run: temporal server start-dev --headless &
 
       - name: Run test
-        shell: bash
-        run: ./run.sh
+        run: bash ./run.sh
 
       - name: Verify workflows
         shell: bash
