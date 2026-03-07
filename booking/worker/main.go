@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"cadence-poc/booking"
-	rpc "cadence-poc/grpc"
+	"github.com/koneko096/cadence-poc/booking"
+	rpc "github.com/koneko096/cadence-poc/grpc"
 )
 
 func main() {

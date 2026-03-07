@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	rpc "cadence-poc/grpc"
+	rpc "github.com/koneko096/cadence-poc/grpc"
 )
 
 type PricingBox struct {

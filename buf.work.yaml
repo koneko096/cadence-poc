@@ -1,4 +1,4 @@
 version: v1
 directories:
   - proto
-  - payment/src/main/proto
+  - payment/src/main/protobuf

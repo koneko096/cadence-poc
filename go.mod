@@ -1,4 +1,4 @@
-module cadence-poc
+module github.com/koneko096/cadence-poc
 
 go 1.26
 

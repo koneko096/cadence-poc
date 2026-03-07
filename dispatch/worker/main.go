@@ -6,7 +6,7 @@ import (
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 
-	"cadence-poc/dispatch"
+	"github.com/koneko096/cadence-poc/dispatch"
 )
 
 func main() {

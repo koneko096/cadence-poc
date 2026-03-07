@@ -8,7 +8,7 @@ import (
 
 	"go.temporal.io/sdk/client"
 
-	"cadence-poc/booking"
+	"github.com/koneko096/cadence-poc/booking"
 )
 
 type Server struct {

@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.13</version>
+        <version>3.4.3</version>
         <relativePath/>
     </parent>
 
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
-            <version>1.15.1</version>
+            <version>1.57.0</version>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
@@ -59,31 +59,26 @@
         </extensions>
         <plugins>
             <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
+                <groupId>io.github.ascopes</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
-                <extensions>true</extensions>
+                <version>5.0.1</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
+                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <additionalProtoPathElements>
-                        <additionalProtoPathElement>
-                            ${project.basedir}/../proto
-                        </additionalProtoPathElement>
-                    </additionalProtoPathElements>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:3.7.0:exe:${os.detected.classifier}
-                    </protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>
-                        io.grpc:protoc-gen-grpc-java:1.15.1:exe:${os.detected.classifier}
-                    </pluginArtifact>
+                    <protoc>3.24.0</protoc>
+                    <plugins>
+                        <plugin kind="binary-maven">
+                            <groupId>io.grpc</groupId>
+                            <artifactId>protoc-gen-grpc-java</artifactId>
+                            <version>1.63.2</version>
+                            <options>jakarta_omit</options>
+                        </plugin>
+                    </plugins>
                 </configuration>
             </plugin>
         </plugins>

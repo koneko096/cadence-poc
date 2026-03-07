@@ -3,8 +3,8 @@
 Simulating ride hailing booking workflow using Temporal.io 
 
 ## Requirements
-- Go 1.14+
-- JDK 8+
+- Go 1.22+
+- JDK 17+
 - Docker and docker-compose
 - [Buf](http://buf.build) 
 

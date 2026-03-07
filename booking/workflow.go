@@ -8,7 +8,7 @@ import (
 
 	"go.temporal.io/sdk/workflow"
 
-	"cadence-poc/grpc"
+	"github.com/koneko096/cadence-poc/grpc"
 )
 
 type Activities struct {
