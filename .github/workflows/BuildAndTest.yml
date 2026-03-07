@@ -47,6 +47,10 @@ jobs:
       - name: Run test
         run: bash ./run.sh
 
+      - name: Wait for 30 seconds
+        shell: bash
+        run: sleep 30s
+
       - name: Verify workflows
         shell: bash
         run: temporal workflow list --output json
