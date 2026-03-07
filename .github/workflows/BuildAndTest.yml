@@ -31,19 +31,23 @@ jobs:
       - name: Running linter
         run: buf lint
 
-      - name: Generating messages and stubs
-        run: buf generate
-
-      - name: Build go
-        run: go build ./...
-
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build payment (Java)
-        run: |
-          cd payment
-          ./mvnw package
+      - name: Install Temporal CLI
+        uses: temporalio/setup-temporal@v0
+
+      - name: Start a local Temporal server
+        shell: bash
+        run: temporal server start-dev --headless &
+
+      - name: Run test
+        shell: bash
+        run: ./run.sh
+
+      - name: Verify workflows
+        shell: bash
+        run: temporal workflow list --output json
