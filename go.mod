@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/jftuga/geodist v1.0.0
 	go.temporal.io/sdk v1.40.0
-	google.golang.org/grpc v1.79.1
+	google.golang.org/grpc v1.79.3
 )
 
 require (
