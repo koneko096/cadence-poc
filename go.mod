@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	github.com/jftuga/geodist v1.0.0
-	go.temporal.io/sdk v1.41.1
+	go.temporal.io/sdk v1.43.0
 	google.golang.org/grpc v1.80.0
 )
 
@@ -21,7 +21,7 @@ require (
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
-	go.temporal.io/api v1.62.2 // indirect
+	go.temporal.io/api v1.62.11 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
